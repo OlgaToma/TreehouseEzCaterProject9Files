@@ -13,9 +13,9 @@ router.get('/', asyncHandler(async(req, res) => {
         include: [{
             model: User,
             as: 'user',
-            attributes: ['firstName', 'lastName', 'emailAddress']
+            attributes: ['id', 'firstName', 'lastName', 'emailAddress']
         }],
-        attributes: ['title', 'description', 'estimatedTime', 'materialsNeeded']
+        attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded']
     });
     
     res.json(courses);
@@ -46,7 +46,7 @@ router.get('/:id', asyncHandler(async(req, res) => {
 router.post('/', authenticateUser, asyncHandler(async(req, res) => {
     try {
         await Course.create(req.body);
-        res.status(201).json({"message":"Course successfully created"});
+        res.status(201).end();
     } catch (error) {
         if(error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError'){
             const errors = error.errors.map(err => err.message);
@@ -67,7 +67,7 @@ router.put('/:id', authenticateUser, asyncHandler(async(req, res) => {
                     id: req.params.id
                 }
             }).then(function(){
-                res.status(204).json({"message":"Course successfully updated"});
+                res.status(204).end();
             });
         } else {
             res.status(403).json({"message":"You can only update your own courses"});
@@ -91,7 +91,7 @@ router.delete('/:id', authenticateUser, asyncHandler(async(req, res) => {
                 id: req.params.id
             }
         }).then(function(){
-            res.status(204).json({"message":"Course successfully deleted"});
+            res.status(204).end();
         });
     } else {
         res.status(403).json({"message":"You can only delete your own courses"});

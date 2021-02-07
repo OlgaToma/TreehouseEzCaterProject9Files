@@ -28,7 +28,7 @@ router.post('/', asyncHandler(async(req, res) => {
         console.log(user);  
         user.save()
             .then( function() {         
-                res.status(201).json({"message":"User successfully created"});
+                res.status(201).end();
             })
             .catch( function(error) {
                 console.log(error.name)
