@@ -13,9 +13,9 @@ router.get('/', asyncHandler(async(req, res) => {
         include: [{
             model: User,
             as: 'user',
-            attributes: ['firstName', 'lastName', 'emailAddress']
+            attributes: ['id', 'firstName', 'lastName', 'emailAddress']
         }],
-        attributes: ['title', 'description', 'estimatedTime', 'materialsNeeded']
+        attributes: ['id', 'title', 'description', 'estimatedTime', 'materialsNeeded']
     });
     
     res.json(courses);
