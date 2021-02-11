@@ -24,23 +24,15 @@ router.post('/', asyncHandler(async(req, res) => {
     try {
         let data = req.body;
         data.password_validate = data.password;
-        let user = await User.create(req.body);
-        console.log(user);  
-        user.save()
-            .then( function() {         
-                res.status(201).end();
-            })
-            .catch( function(error) {
-                console.log(error.name)
-                if(error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError'){
-                    const errors = error.errors.map(err => err.message);
-                    res.status(400).json({ errors });  
-                } else {
-                    throw error;
-                }
-            });
+        await User.create(req.body);  
+        res.status(201).location('/').end();
     } catch (error) {
-       throw error;
+        if(error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError'){
+            const errors = error.errors.map(err => err.message);
+            res.status(400).json({ errors });  
+        } else {
+            throw error;
+        }
     }
 }));
 

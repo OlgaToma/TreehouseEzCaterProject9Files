@@ -45,8 +45,8 @@ router.get('/:id', asyncHandler(async(req, res) => {
 // Create a new course
 router.post('/', authenticateUser, asyncHandler(async(req, res) => {
     try {
-        await Course.create(req.body);
-        res.status(201).end();
+        let course = await Course.create(req.body);
+        res.status(201).location(`/api/courses/${course.id}`).end();
     } catch (error) {
         if(error.name === 'SequelizeValidationError' || error.name === 'SequelizeUniqueConstraintError'){
             const errors = error.errors.map(err => err.message);
@@ -85,7 +85,19 @@ router.put('/:id', authenticateUser, asyncHandler(async(req, res) => {
 // Delete the specified course
 router.delete('/:id', authenticateUser, asyncHandler(async(req, res) => {
     // Users can only delete their own courses
-    if(req.params.id == req.currentUser.id) {
+    const course = await Course.findOne({
+        where: {
+            id: req.params.id
+        },
+        include: [{
+          model: User,
+          as: 'user',
+          attributes: ['id']
+        }],
+        attributes: ['id']
+    });
+
+    if(course.user.id == req.currentUser.id) {
         await Course.destroy({
             where: {
                 id: req.params.id
